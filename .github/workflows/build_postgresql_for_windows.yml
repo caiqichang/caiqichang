@@ -1,0 +1,61 @@
+name: build postgresql for windows
+
+# Officical Documentation:
+# https://www.postgresql.org/docs/current/installation-platform-notes.html#INSTALLATION-NOTES-MINGW
+
+on: 
+  workflow_dispatch:
+    inputs:
+      postgresql_version:
+        description: 'version of postgresql'
+        required: true
+        default: 'REL_17_5'
+
+env:
+  output_filename: postgresql_win_x64
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup MSVC Developer Command Prompt
+        uses: TheMrMilchmann/setup-msvc-dev@v3.0.1
+        with:
+          arch: x64
+          
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+
+      - name: Clone Source Code
+        run: |
+          c:
+          git clone --branch=${{github.event.inputs.postgresql_version}} --depth=1 https://github.com/postgres/postgres
+
+      - name: Configure
+        shell: msys2 {0}
+        run: |
+          cd /c/postgres
+          ./configure \
+          --host=x86_64-w64-mingw32 \
+
+      - name: Make
+        run: |
+          c:
+          cd postgres
+          nmake
+
+      - name: Package
+        run: |
+          c:
+          tar -c -f ${{env.output_filename}}-${{github.event.inputs.postgresql_version}}.tar postgres
+      
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: ${{env.output_filename}}-${{github.event.inputs.postgresql_version}}.tar
+          path: c:/${{env.output_filename}}-${{github.event.inputs.postgresql_version}}.tar
+
