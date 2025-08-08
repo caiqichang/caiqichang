@@ -29,6 +29,8 @@ jobs:
           install: >-
             base-devel
             gcc
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-icu
 
       - name: Clone Source Code
         run: |
