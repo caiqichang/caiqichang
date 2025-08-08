@@ -45,10 +45,10 @@ jobs:
           --host=x86_64-w64-mingw32 \
 
       - name: Make
+        shell: msys2 {0}
         run: |
-          c:
-          cd postgres
-          nmake
+          cd /c/postgres
+          make
 
       - name: Package
         run: |
