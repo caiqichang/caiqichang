@@ -37,17 +37,13 @@ jobs:
           c:
           git clone --branch=${{github.event.inputs.postgresql_version}} --depth=1 https://github.com/postgres/postgres
 
-      - name: Configure
+      - name: Configure and Make
         shell: msys2 {0}
         run: |
+          pacman -Syu
+          pacman -Su
           cd /c/postgres
-          ./configure \
-          --host=x86_64-w64-mingw32 \
-
-      - name: Make
-        shell: msys2 {0}
-        run: |
-          cd /c/postgres
+          ./configure --host=x86_64-w64-mingw32
           make
 
       - name: Package
