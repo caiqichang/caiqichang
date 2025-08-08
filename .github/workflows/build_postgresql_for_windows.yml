@@ -42,8 +42,13 @@ jobs:
         run: |
           cd /c/postgres
           ./configure \
-          --host=x86_64-w64-mingw32
-          make
+          --host=x86_64-w64-mingw32 \
+
+      - name: Make
+        run: |
+          c:
+          cd postgres
+          nmake
 
       - name: Package
         run: |
